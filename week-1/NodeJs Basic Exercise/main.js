@@ -113,7 +113,7 @@ async function main() {
       console.error('Requirement 8 failed:', error);
     }
   } catch (error) {
-    console.error('Error fetching data:', error);
+    console.error('Error fetching database:', error);
   }
 }
 
