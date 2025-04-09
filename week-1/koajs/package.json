@@ -1,0 +1,25 @@
+{
+  "name": "koajs",
+  "version": "1.0.0",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "nodemon src/app.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "@koa/router": "^13.1.0",
+    "koa": "^2.16.1",
+    "koa-body": "^6.0.1",
+    "koa-router": "^13.0.1",
+    "yup": "^1.6.1"
+  },
+  "devDependencies": {
+    "@faker-js/faker": "^9.6.0",
+    "nodemon": "^3.1.9"
+  }
+}
