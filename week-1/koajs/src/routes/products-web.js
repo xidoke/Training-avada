@@ -12,7 +12,6 @@ const productsWebRouter = new Router();
 productsWebRouter.get('/', async (ctx) => {
     try {
         // Call the API handler but capture the response
-        ctx.params = {}; // Ensure params exists
         await getAllProducts(ctx);
         const products = ctx.body.data; // Get the products from the API response
 
