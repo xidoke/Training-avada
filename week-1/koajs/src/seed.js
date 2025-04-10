@@ -1,8 +1,10 @@
 import * as fs from "node:fs";
 import {faker} from "@faker-js/faker"
+import path from "path";
 
 const NUM_PRODUCTS = 1000; // Số lượng sản phẩm cần tạo
-const FILE_PATH = 'products.json'; // Tên file output
+
+const FILE_PATH = path.join(process.cwd(), "src", "database", "products.json");
 
 const products = [];
 
@@ -17,14 +19,16 @@ for (let i = 0; i < NUM_PRODUCTS; i++) {
         product: faker.commerce.department(),
         color: faker.color.human(),
         createdAt: faker.date.past().toISOString(),
-        image: faker.image.urlLoremFlickr({ category: 'technics', width: 640, height: 480 }) // ví dụ dùng 'technics'
+        image: faker.image.urlPicsumPhotos({ width: 640, height: 480 }) // ví dụ dùng 'technics'
     };
     products.push(product);
 }
 
 console.log(`Generated ${products.length} products.`);
 
-const jsonData = JSON.stringify(products, null, 2);
+const jsonData = JSON.stringify({
+    data: products,
+}, null, 2);
 
 try {
     fs.writeFileSync(FILE_PATH, jsonData, 'utf8');

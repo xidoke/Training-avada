@@ -1,14 +1,29 @@
 import Router from 'koa-router';
+import apiRouter from './api.js';
+import productsWebRouter from './products-web.js';
+import booksWebRouter from './books-web.js';
 
-import booksRouter from './books.js';
-import productsRouter from './products.js';
+// Create a main router
+const mainRouter = new Router();
 
-const apiRouter = new Router({
-    prefix: '/api' // Prefix chung cho toàn bộ API
+// Mount API router
+mainRouter.use(apiRouter.routes(), apiRouter.allowedMethods());
+
+// Create and mount web routers
+const webRouter = new Router();
+
+// Home route
+webRouter.get('/', async (ctx) => {
+    ctx.redirect('/products');
 });
 
-apiRouter.use('/books', booksRouter.routes(), booksRouter.allowedMethods());
+// Mount product web routes
+webRouter.use('/products', productsWebRouter.routes(), productsWebRouter.allowedMethods());
 
-apiRouter.use('/products', productsRouter.routes(), productsRouter.allowedMethods());
+// Mount book web routes (if you have them)
+webRouter.use('/books', booksWebRouter.routes(), booksWebRouter.allowedMethods());
 
-export default apiRouter;
+// Mount web router to main router
+mainRouter.use(webRouter.routes(), webRouter.allowedMethods());
+
+export default mainRouter;

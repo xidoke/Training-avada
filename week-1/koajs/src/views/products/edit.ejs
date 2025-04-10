@@ -1,0 +1,96 @@
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2>Edit Product</h2>
+    <div>
+        <a href="/products/<%= product.id %>" class="btn btn-info">View Details</a>
+        <a href="/products" class="btn btn-secondary">Back to List</a>
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-body">
+        <form id="editProductForm">
+            <input type="hidden" id="productId" value="<%= product.id %>">
+
+            <div class="form-group">
+                <label for="name">Product Name*</label>
+                <input type="text" class="form-control" id="name" name="name" value="<%= product.name %>" required>
+            </div>
+
+            <div class="form-group">
+                <label for="price">Price*</label>
+                <div class="input-group">
+                    <span class="input-group-text">$</span>
+                    <input type="number" class="form-control" id="price" name="price" min="0" step="0.01" value="<%= product.price %>" required>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="product">Product*</label>
+                <input type="text" class="form-control" id="product" name="product" value="<%= product.product %>" required>
+            </div>
+
+            <div class="form-group">
+                <label for="color">Color*</label>
+                <input type="text" class="form-control" id="color" name="color" value="<%= product.color %>" required>
+                <div class="form-text">Enter a color name (e.g., red, blue, green)</div>
+            </div>
+
+            <div class="form-group">
+                <label for="description">Description</label>
+                <textarea class="form-control" id="description" name="description" rows="3"><%= product.description || '' %></textarea>
+            </div>
+
+            <div class="form-group">
+                <label for="image">Image URL</label>
+                <input type="url" class="form-control" id="image" name="image" value="<%= product.image || '' %>">
+                <% if (product.image) { %>
+                    <div class="mt-2">
+                        <img src="<%= product.image %>" alt="Product image preview" style="max-height: 100px;" class="img-thumbnail">
+                    </div>
+                <% } %>
+            </div>
+
+            <div class="mt-4">
+                <button type="submit" class="btn btn-primary">Update Product</button>
+                <a href="/products/<%= product.id %>" class="btn btn-outline-secondary">Cancel</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const form = document.getElementById('editProductForm');
+        const productId = document.getElementById('productId').value;
+
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const formData = new FormData(form);
+            const product = Object.fromEntries(formData.entries());
+
+            // Convert numeric fields
+            product.price = parseFloat(product.price);
+
+            try {
+                const response = await fetch(`/api/products/${productId}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(product)
+                });
+
+                if (response.ok) {
+                    window.location.href = `/products/${productId}`;
+                } else {
+                    const error = await response.json();
+                    alert(`Failed to update product: ${error.message || 'Unknown error'}`);
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('An error occurred while updating the product');
+            }
+        });
+    });
+</script>

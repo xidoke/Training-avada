@@ -1,0 +1,86 @@
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2>Product Details</h2>
+    <div>
+        <a href="/products/<%= product.id %>/edit" class="btn btn-warning">Edit</a>
+        <button class="btn btn-danger delete-product" data-id="<%= product.id %>">Delete</button>
+        <a href="/products" class="btn btn-secondary">Back to List</a>
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-body">
+        <h3 class="card-title"><%= product.name %></h3>
+        <div class="row">
+            <div class="col-md-8">
+                <table class="table">
+                    <tr>
+                        <th style="width: 150px;">ID:</th>
+                        <td><%= product.id %></td>
+                    </tr>
+                    <tr>
+                        <th>Price:</th>
+                        <td>$<%= product.price.toLocaleString() %></td>
+                    </tr>
+                    <tr>
+                        <th>Product:</th>
+                        <td><%= product.product %></td>
+                    </tr>
+                    <tr>
+                        <th>Color:</th>
+                        <td>
+                            <span class="badge rounded-pill" style="background-color: <%= product.color %>; color: <%= ['white', 'black', 'navy', 'darkblue'].includes(product.color) ? 'white' : 'black' %>">
+                                <%= product.color %>
+                            </span>
+                        </td>
+                    </tr>
+                    <% if (product.description) { %>
+                        <tr>
+                            <th>Description:</th>
+                            <td><%= product.description %></td>
+                        </tr>
+                    <% } %>
+                    <% if (product.createdAt) { %>
+                        <tr>
+                            <th>Created:</th>
+                            <td><%= new Date(product.createdAt).toLocaleString() %></td>
+                        </tr>
+                    <% } %>
+                </table>
+            </div>
+            <div class="col-md-4">
+                <% if (product.image) { %>
+                    <img src="<%= product.image %>" alt="<%= product.name %>" class="img-fluid rounded">
+                <% } else { %>
+                    <div class="bg-light p-5 text-center rounded">
+                        <p class="text-muted">No image available</p>
+                    </div>
+                <% } %>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        document.querySelector('.delete-product').addEventListener('click', async (e) => {
+            if (confirm('Are you sure you want to delete this product?')) {
+                const id = e.target.dataset.id;
+                try {
+                    const response = await fetch(`/api/products/${id}`, {
+                        method: 'DELETE'
+                    });
+
+                    if (response.ok) {
+                        window.location.href = '/products';
+                    } else {
+                        const error = await response.json();
+                        alert(`Failed to delete product: ${error.message || 'Unknown error'}`);
+                    }
+                } catch (error) {
+                    console.error('Error:', error);
+                    alert('An error occurred while deleting the product');
+                }
+            }
+        });
+    });
+</script>

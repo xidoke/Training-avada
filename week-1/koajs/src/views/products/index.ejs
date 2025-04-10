@@ -1,0 +1,84 @@
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <p class="lead">Manage your product inventory</p>
+    <a href="/products/new" class="btn btn-primary">Add New Product</a>
+</div>
+
+<% if (products && products.length > 0) { %>
+    <div class="table-responsive">
+        <table class="table table-striped table-hover align-middle">
+            <thead>
+            <tr>
+                <th>Image</th>
+                <th>ID</th>
+                <th>Name</th>
+                <th>Price</th>
+                <th>Product</th>
+                <th>Color</th>
+                <th>Actions</th>
+            </tr>
+            </thead>
+            <tbody>
+            <% products.forEach(product => { %>
+                <tr>
+                    <td>
+                        <% if (product.image) { %>
+                            <img src="<%= product.image %>" alt="<%= product.name %>" class="img-thumbnail" style="width: 60px; height: 60px; object-fit: cover;">
+                        <% } else { %>
+                            <div class="bg-light text-center rounded" style="width: 60px; height: 60px; display: flex; align-items: center; justify-content: center;">
+                                <small class="text-muted">No image</small>
+                            </div>
+                        <% } %>
+                    </td>
+                    <td><%= product.id %></td>
+                    <td><%= product.name %></td>
+                    <td>$<%= product.price.toLocaleString() %></td>
+                    <td><%= product.product %></td>
+                    <td>
+                            <span class="badge rounded-pill" style="background-color: <%= product.color %>; color: <%= ['white', 'black', 'navy', 'darkblue'].includes(product.color) ? 'white' : 'black' %>">
+                                <%= product.color %>
+                            </span>
+                    </td>
+                    <td>
+                        <div class="btn-group btn-group-sm">
+                            <a href="/products/<%= product.id %>" class="btn btn-info">View</a>
+                            <a href="/products/<%= product.id %>/edit" class="btn btn-warning">Edit</a>
+                            <button class="btn btn-danger delete-product" data-id="<%= product.id %>">Delete</button>
+                        </div>
+                    </td>
+                </tr>
+            <% }) %>
+            </tbody>
+        </table>
+    </div>
+<% } else { %>
+    <div class="alert alert-info">
+        No products found. <a href="/products/new">Add your first product</a>.
+    </div>
+<% } %>
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        document.querySelectorAll('.delete-product').forEach(button => {
+            button.addEventListener('click', async (e) => {
+                if (confirm('Are you sure you want to delete this product?')) {
+                    const id = e.target.dataset.id;
+                    try {
+                        const response = await fetch(`/api/products/${id}`, {
+                            method: 'DELETE'
+                        });
+
+                        if (response.ok) {
+                            window.location.reload();
+                        } else {
+                            const error = await response.json();
+                            alert(`Failed to delete product: ${error.message || 'Unknown error'}`);
+                        }
+                    } catch (error) {
+                        console.error('Error:', error);
+                        alert('An error occurred while deleting the product');
+                    }
+                }
+            });
+        });
+    });
+</script>
